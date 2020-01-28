@@ -1,5 +1,6 @@
 import gitlab
 import yaml
+import time
 from kubernetes import client, config
 from jinja2 import Template
 import os
@@ -46,4 +47,10 @@ def main() -> None:
         )
 
 
-main()
+def main2() -> None:
+    print("I am happy running in this container!")
+    while True:
+        time.sleep(1)
+
+
+main2()
