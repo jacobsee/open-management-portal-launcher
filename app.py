@@ -3,11 +3,11 @@ import yaml
 import time
 from kubernetes import client, config
 from jinja2 import Template
-import os
+# import os
 
-gitlab_api_url = os.environ["GITLAB_API_URL"]
-gitlab_token = os.environ["GITLAB_PERSONAL_ACCESS_TOKEN"]
-gitlab_group = os.environ["RESIDENCIES_PARENT_REPOSITORIES_ID"]
+# gitlab_api_url = os.environ["GITLAB_API_URL"]
+# gitlab_token = os.environ["GITLAB_PERSONAL_ACCESS_TOKEN"]
+# gitlab_group = os.environ["RESIDENCIES_PARENT_REPOSITORIES_ID"]
 
 application_template = Template("""apiVersion: argoproj.io/v1alpha1
 kind: Application
