@@ -42,7 +42,7 @@ def main() -> None:
             group="argoproj.io",
             version="v1alpha1",
             namespace="argo-cd",
-            plural="Applications",
+            plural="applications",
             body=application_data,
         )
 
