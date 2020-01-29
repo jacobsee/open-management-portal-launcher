@@ -11,13 +11,13 @@ gitlab_group = os.environ["RESIDENCIES_PARENT_REPOSITORIES_ID"]
 application_template = Template("""apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: omp-{{ RESOURCE_ID }}
+  name: "omp-{{ RESOURCE_ID }}"
 spec:
   destination:
-    namespace: anarchy-operator
+    namespace: "anarchy-operator"
     server: 'https://kubernetes.default.svc'
   source:
-    path: objects/ocp-init
+    path: "objects/ocp-init"
     repoURL: >-
       {{ REPO_URL }}
     targetRevision: HEAD
