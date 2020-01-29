@@ -36,6 +36,7 @@ def main() -> None:
         application_data = yaml.safe_load(application)
         # print(project)
         # print(application + "\n\n")
+        print(application_data)
 
         custom_object_api.create_namespaced_custom_object(
             group="argoproj.io",
