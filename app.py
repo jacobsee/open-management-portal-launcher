@@ -33,7 +33,7 @@ def main() -> None:
     group = g.groups.get(gitlab_group)
     for project in group.projects.list(all=True, include_subgroups=True):
         application = application_template.render(RESOURCE_ID=project.id, REPO_URL=project.ssh_url_to_repo)
-        application_data = yaml.safe_load(application)
+        application_data = yaml.load(application, Loader=yaml.FullLoader)
         # print(project)
         # print(application + "\n\n")
         print(application_data)
