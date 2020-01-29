@@ -40,7 +40,7 @@ def main() -> None:
         custom_object_api.create_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
-            namespace="anarchy-operator",
+            namespace="argo-cd",
             plural="Applications",
             body=application_data,
         )
