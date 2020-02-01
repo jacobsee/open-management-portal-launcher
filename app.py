@@ -29,6 +29,14 @@ def main() -> None:
     config.load_incluster_config()
     custom_object_api = client.CustomObjectsApi()
 
+    current_applications = custom_object_api.list_cluster_custom_object(
+        group="argoproj.io",
+        version="v1alpha1",
+        namespace="argo-cd",
+        plural="applications",
+    )
+    print(current_applications)
+
     g.auth()
     group = g.groups.get(gitlab_group)
     for project in group.projects.list(all=True, include_subgroups=True):
