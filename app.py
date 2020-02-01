@@ -3,6 +3,7 @@ import yaml
 from kubernetes import client, config
 from jinja2 import Template
 import os
+from functools import reduce
 
 gitlab_api_url = os.environ["GITLAB_API_URL"]
 gitlab_token = os.environ["GITLAB_PERSONAL_ACCESS_TOKEN"]
@@ -29,13 +30,14 @@ def main() -> None:
     config.load_incluster_config()
     custom_object_api = client.CustomObjectsApi()
 
-    current_applications = custom_object_api.list_namespaced_custom_object(
+    current_applications_list = custom_object_api.list_namespaced_custom_object(
         group="argoproj.io",
         version="v1alpha1",
         namespace="argo-cd",
         plural="applications",
     )
-    print(current_applications)
+    current_application_names = reduce(lambda item: item.metdata.name, current_applications_list.items)
+    print(current_application_names)
 
     g.auth()
     group = g.groups.get(gitlab_group)
@@ -44,15 +46,15 @@ def main() -> None:
         application_data = yaml.load(application, Loader=yaml.FullLoader)
         # print(project)
         # print(application + "\n\n")
-        print(application_data)
-
-        custom_object_api.create_namespaced_custom_object(
-            group="argoproj.io",
-            version="v1alpha1",
-            namespace="argo-cd",
-            plural="applications",
-            body=application_data,
-        )
+        # print(application_data)
+        if application_data.metadata.name not in current_application_names:
+            custom_object_api.create_namespaced_custom_object(
+                group="argoproj.io",
+                version="v1alpha1",
+                namespace="argo-cd",
+                plural="applications",
+                body=application_data,
+            )
 
 
 main()
