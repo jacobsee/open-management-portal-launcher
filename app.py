@@ -36,17 +36,15 @@ def main() -> None:
         plural="applications",
     )
     current_application_names = map(lambda item: item["metadata"]["name"], current_applications_list["items"])
-    print(current_application_names)
 
     g.auth()
     group = g.groups.get(gitlab_group)
     for project in group.projects.list(all=True, include_subgroups=True):
         application = application_template.render(RESOURCE_ID=project.id, REPO_URL=project.ssh_url_to_repo)
         application_data = yaml.load(application, Loader=yaml.FullLoader)
-        # print(project)
-        # print(application + "\n\n")
-        # print(application_data)
+        print(f"Checking for {application_data['metadata']['name']}")
         if application_data["metadata"]["name"] not in current_application_names:
+            print(f"Creating {application_data['metadata']['name']}")
             custom_object_api.create_namespaced_custom_object(
                 group="argoproj.io",
                 version="v1alpha1",
@@ -54,6 +52,8 @@ def main() -> None:
                 plural="applications",
                 body=application_data,
             )
+        else:
+            print(f"Found {application_data['metadata']['name']}, skipping")
 
 
 main()
