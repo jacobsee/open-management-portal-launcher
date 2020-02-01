@@ -29,7 +29,7 @@ def main() -> None:
     config.load_incluster_config()
     custom_object_api = client.CustomObjectsApi()
 
-    current_applications = custom_object_api.list_cluster_custom_object(
+    current_applications = custom_object_api.list_namespaced_custom_object(
         group="argoproj.io",
         version="v1alpha1",
         namespace="argo-cd",
