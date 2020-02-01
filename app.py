@@ -3,7 +3,6 @@ import yaml
 from kubernetes import client, config
 from jinja2 import Template
 import os
-from functools import reduce
 
 gitlab_api_url = os.environ["GITLAB_API_URL"]
 gitlab_token = os.environ["GITLAB_PERSONAL_ACCESS_TOKEN"]
@@ -36,7 +35,7 @@ def main() -> None:
         namespace="argo-cd",
         plural="applications",
     )
-    current_application_names = reduce(lambda item: item.metdata.name, current_applications_list.items)
+    current_application_names = map(lambda item: item.metdata.name, current_applications_list.items)
     print(current_application_names)
 
     g.auth()
