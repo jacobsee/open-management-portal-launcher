@@ -35,7 +35,7 @@ def main() -> None:
         namespace="argo-cd",
         plural="applications",
     )
-    current_application_names = map(lambda item: item["metadata"]["name"], current_applications_list.items())
+    current_application_names = map(lambda item: item["metadata"]["name"], current_applications_list.items)
     print(current_application_names)
 
     g.auth()
