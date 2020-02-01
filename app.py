@@ -46,7 +46,7 @@ def main() -> None:
         # print(project)
         # print(application + "\n\n")
         # print(application_data)
-        if application_data.metadata.name not in current_application_names:
+        if application_data["metadata"]["name"] not in current_application_names:
             custom_object_api.create_namespaced_custom_object(
                 group="argoproj.io",
                 version="v1alpha1",
