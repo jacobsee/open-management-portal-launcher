@@ -36,6 +36,7 @@ def main() -> None:
         plural="applications",
     )
     current_application_names = map(lambda item: item["metadata"]["name"], current_applications_list["items"])
+    print(f"Current applications: {list(current_applications_list)}")
 
     g.auth()
     group = g.groups.get(gitlab_group)
