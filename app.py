@@ -23,11 +23,20 @@ spec:
     targetRevision: HEAD
   project: default""")
 
+repository_config_template = Template("""- name: omp-{{ RESOURCE_ID }}
+  sshPrivateKeySecret:
+    key: sshPrivateKey
+    name: {{ SSH_SECRET_NAME }}
+  type: git
+  url: {{ REPO_URL }}
+""")
+
 
 def main() -> None:
     g = gitlab.Gitlab(gitlab_api_url, private_token=gitlab_token)
     config.load_incluster_config()
     custom_object_api = client.CustomObjectsApi()
+    config_map_api = client.CoreV1Api()
 
     current_applications_list = custom_object_api.list_namespaced_custom_object(
         group="argoproj.io",
@@ -45,6 +54,7 @@ def main() -> None:
         application_data = yaml.load(application, Loader=yaml.FullLoader)
         print(f"Checking for {application_data['metadata']['name']}")
         if not application_data["metadata"]["name"] in current_application_names:
+            # Create Application object in OpenShift
             print(f"Creating {application_data['metadata']['name']}")
             custom_object_api.create_namespaced_custom_object(
                 group="argoproj.io",
@@ -53,6 +63,13 @@ def main() -> None:
                 plural="applications",
                 body=application_data,
             )
+
+            # Edit ConfigMap to include repository link to SSH secret
+            config_map = config_map_api.read_namespaced_config_map(
+                name="argocd-cm",
+                namespace="argo-cd",
+            )
+            print(config_map['data'])
         else:
             print(f"Found {application_data['metadata']['name']}, skipping")
 
