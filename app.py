@@ -50,9 +50,15 @@ def main() -> None:
     g.auth()
     group = g.groups.get(gitlab_group)
     for project in group.projects.list(all=True, include_subgroups=True):
-        application = application_template.render(RESOURCE_ID=project.id, REPO_URL=project.ssh_url_to_repo)
+        # Iterate through relevant GitLab projects
+        application = application_template.render(
+            RESOURCE_ID=project.id,
+            REPO_URL=project.ssh_url_to_repo,
+        )
         application_data = yaml.load(application, Loader=yaml.FullLoader)
         print(f"Checking for {application_data['metadata']['name']}")
+
+        # Check if we need to process this one or if it's already there
         if not application_data["metadata"]["name"] in current_application_names:
             # Create Application object in OpenShift
             print(f"Creating {application_data['metadata']['name']}")
@@ -64,12 +70,22 @@ def main() -> None:
                 body=application_data,
             )
 
-            # Edit ConfigMap to include repository link to SSH secret
+            # Edit ConfigMap to link the repo to an SSH secret
             config_map = config_map_api.read_namespaced_config_map(
                 name="argocd-cm",
                 namespace="argo-cd",
             )
             print(config_map.data)
+            repository_config = repository_config_template.render(
+                RESOURCE_ID=project.id,
+                REPO_URL=project.ssh_url_to_repo,
+                SSH_SECRET_NAME="stuff-for-now",
+            )
+            if "repositories" in config_map.data.keys():
+                config_map.data['repositories'] += "\n" + repository_config
+            else:
+                config_map.data['repositories'] += repository_config
+            config_map_api.patch_namespaced_config_map(name="argocd-cm", namespace="argo-cd", body=config_map)
         else:
             print(f"Found {application_data['metadata']['name']}, skipping")
 
