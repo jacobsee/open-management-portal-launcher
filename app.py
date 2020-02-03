@@ -69,7 +69,7 @@ def main() -> None:
                 name="argocd-cm",
                 namespace="argo-cd",
             )
-            print(config_map['data'])
+            print(config_map.data)
         else:
             print(f"Found {application_data['metadata']['name']}, skipping")
 
